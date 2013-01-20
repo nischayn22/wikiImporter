@@ -1,0 +1,25 @@
+Description -
+This is a utility script that selectively updates a wiki using another wiki's content, 
+i.e. if you have a public and a private wiki where the public wiki has *only* partial contents of the private wiki,
+this script can selectively fetch pages/images from your private wiki and import them to your public wiki.
+Its needed to list all the pages to import in a csv file
+
+Usage -
+Just run this script after setting the settings (below).
+
+--
+Please set the settings in index.php at the top to point to your wikis
+Example settings - 
+
+$settings['privatewiki'] = "http://localhost/private";
+$settings['publicwiki'] = "http://localhost/public";
+$settings['user'] = "Nischayn22"; // A user who has all the privileges like file-deletion, file-uploading, etc
+$settings['pass'] = "password";
+$settings['file'] = "clientPages.txt";
+
+Example - 
+csv file named clientPages.txt has the following text:
+
+Hello,Category:Id,File:Passportpics.jpg
+
+--
