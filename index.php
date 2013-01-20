@@ -65,6 +65,12 @@ echo "Now starting to import pages, categories and file-pages from the csv file<
 //get pagenames from file
 $file = file_get_contents('./' . $settings['file'], true);
 $pages = explode( ",", $file );
+
+	//get token first
+	$url = $settings['publicwiki'] . "/api.php?format=xml&action=query&titles=Main_Page&prop=info|revisions&intoken=edit";
+	$data = httpRequest($url, $params = '');
+	$xml = simplexml_load_string($data);
+	$editToken = urlencode( (string)$xml->query->pages->page['edittoken'] );
 foreach($pages as $pageName) {
-	copypage( $pageName );
+	copypage( $pageName, $editToken );
 }

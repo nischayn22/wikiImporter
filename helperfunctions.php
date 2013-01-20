@@ -87,7 +87,7 @@ function deletepage( $pageName ) {
 		}
 }
 
-function copypage( $pageName ) {
+function copypage( $pageName, $editToken ) {
 	global $settings;
 
 // Get Namespace
@@ -99,11 +99,6 @@ function copypage( $pageName ) {
 	$content = (string)$xml->query->pages->page->revisions->rev;
 
 	//Now copy this to other wiki
-	//get token first
-	$url = $settings['publicwiki'] . "/api.php?format=xml&action=query&titles=$pageName&prop=info|revisions&intoken=edit";
-	$data = httpRequest($url, $params = '');
-	$xml = simplexml_load_string($data);
-	$editToken = urlencode( (string)$xml->query->pages->page['edittoken'] );
 	$timestamp = (string)$xml->query->pages->page->revisions->rev['timestamp'];
 
 	if( count( $parts ) === 2 && $parts[0] === 'File') { // files are handled here
@@ -118,8 +113,8 @@ function copypage( $pageName ) {
 		return;
 	}
 	// now copy normal page
-	$url = $settings['publicwiki'] . "/api.php?format=xml&action=edit&title=$pageName&text=$content&basetimestamp=$timestamp";
-	$data = httpRequest($url, $params = "format=xml&action=edit&title=$pageName&text=$content&basetimestamp=$timestamp&token=$editToken");
+	$url = $settings['publicwiki'] . "/api.php?format=xml&action=edit&title=$pageName&text=$content";
+	$data = httpRequest($url, $params = "format=xml&action=edit&title=$pageName&text=$content&token=$editToken");
 	$xml = simplexml_load_string($data);
 	//get status to display
 
