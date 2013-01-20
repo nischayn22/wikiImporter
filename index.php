@@ -17,7 +17,7 @@ echo "Logging In to Public Wiki<br/>";
                 global $settings;
 				
 //XXX
-		$settings['user'] = 'Nischay Nahata';
+//		$settings['user'] = 'Nischay Nahata';
                 $token = login($settings['publicwiki'],$settings['user'], $settings['pass']);
                 login($settings['publicwiki'],$settings['user'], $settings['pass'], $token);
                 echo ("SUCCESS<br>");
