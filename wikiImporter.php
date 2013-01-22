@@ -58,11 +58,10 @@ echo "Logging into private wiki now<br>";
                 die("FAILED: " . $e->getMessage() . "<br>");
         }
 //die();
-echo "Now starting to import pages, categories and file-pages from the csv file<br>";
+echo "Now starting to import pages, categories and file-pages from the given file<br>";
 
 //get pagenames from file
-$file = file_get_contents('./' . $settings['file'], true);
-$pages = explode( ",", $file );
+$pages = file($settings['file'], FILE_IGNORE_NEW_LINES);
 
 	//get token first
 	$url = $settings['publicwiki'] . "/api.php?format=xml&action=query&titles=Main_Page&prop=info|revisions&intoken=edit";
