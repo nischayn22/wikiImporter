@@ -1,4 +1,9 @@
 <?php
+/**
+ * @author Nischay Nahata <nischayn22@gmail.com>
+ * @license GPL v2 or later
+ */
+
 function httpRequest($url, $post="") {
         global $settings;
 

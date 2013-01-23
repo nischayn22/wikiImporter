@@ -1,14 +1,14 @@
-Description -
+# Description -
 This is a utility script that selectively updates a wiki using another wiki's content, 
 i.e. if you have a public and a private wiki where the public wiki has *only* partial contents of the private wiki,
 this script can selectively fetch pages/images from your private wiki and import them to your public wiki.
 Its needed to list all the pages to import in a file in separate lines.
 
-Usage -
+# Usage -
 Just run this script after setting the settings (below).
 
 --
-Please set the settings in index.php at the top to point to your wikis
+## Please set the settings in settings.php to point to your wikis
 Example settings - 
 
 $settings['privatewiki'] = "http://localhost/private";
@@ -17,7 +17,7 @@ $settings['user'] = "Nischayn22"; // A user who has all the privileges like file
 $settings['pass'] = "password";
 $settings['file'] = "clientPages.txt";
 
-Example - 
+# Example - 
 file named clientPages.txt has the following text:
 
 Hello
@@ -27,5 +27,8 @@ File:Passportpics.jpg
 --
 
 
-Authors
+# Authors
 wikiImporter was originally written by Nischay Nahata, as http://www.WikiWorks.com consultant for Aruba Networks
+
+# License
+GPL v2 or later

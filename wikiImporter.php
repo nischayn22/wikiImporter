@@ -1,13 +1,14 @@
 <?php
+/**
+ * @author Nischay Nahata <nischayn22@gmail.com>
+ * @license GPL v2 or later
+ */
+
 error_reporting( E_ALL );
 ini_set( 'display_errors', 1 );
 
-$settings['privatewiki'] = "http://localhost/privateAruba";
-$settings['publicwiki'] = "http://localhost/publicAruba";
-$settings['user'] = "Nischayn22";
-$settings['pass'] = "password";
-$settings['file'] = "clientPages.txt";
 
+include( 'settings.php' );
 $settings['cookiefile'] = "cookies.tmp";
 include( 'helperfunctions.php' );
 
