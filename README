@@ -11,11 +11,11 @@ Just run this script after setting the settings (below).
 ## Please set the settings in settings.php to point to your wikis
 Example settings - 
 
-$settings['publicwiki'] = "http://localhost/publicAruba"; // Location of Api.php 
+$settings['publicwiki'] = "http://myPublic.com/w"; // Location of Api.php 
 $settings['publicWikiUser'] = "Nischay Nahata"; // Username of account with read,write permissions
 $settings['publicWikiPassword'] = "password"; // Password
 
-$settings['privatewiki'] = "http://localhost/privateAruba"; // Location of Api.php
+$settings['privatewiki'] = "http://myPrivate.com/w"; // Location of Api.php
 $settings['privateWikiUser'] = "Nischay Nahata"; // Username of account with read,write permissions
 $settings['privateWikiPassword'] = "password"; // Password
 
