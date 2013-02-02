@@ -69,54 +69,41 @@ function login ( $site, $user, $pass, $token='') {
 	return $result[0]->attributes()->token;
 }
 
-function deletepage( $pageName ) {
-        global $settings;
+function deletepage( $pageid, $deleteToken ) {
+	global $settings;
 
-		//get delete token
-        $url = $settings['publicwiki'] . "/api.php?action=query&prop=info&intoken=delete&titles=$pageName&format=xml";
-        $data = httpRequest($url, $params = '');
-        $xml = simplexml_load_string($data);
-		$expr = "/api/query/pages/page";
-		$result = $xml->xpath($expr);
-		if( isset( $result[0] ) ) { // should skip Main Page
-			$deleteToken = urlencode((string)($result[0]['deletetoken']));
-			//now delete stuff
-			echo "deleting page $pageName \n";
-			$url = $settings['publicwiki'] . "/api.php?action=delete&format=xml";
-			$params = "action=delete&title=$pageName&token=$deleteToken";
-			$data = httpRequest($url, $params);
-			$xml = simplexml_load_string($data);
-		}else{
-			echo "Unable to delete $pageName\n";
-			//TODO show reasons here
-		}
+	$url = $settings['publicwiki'] . "/api.php?action=delete&format=xml";
+	$params = "action=delete&pageid=$pageid&token=$deleteToken&reason=Outdated";
+	$data = httpRequest($url, $params);
+	$xml = simplexml_load_string($data);
 }
 
 function copypage( $pageName, $editToken ) {
 	global $settings;
 
+	echo "Copying over $pageName\n";
+	$pageName = str_replace( ' ', '_', $pageName );
 	// Get Namespace
 	$parts = explode( ':', $pageName );
-	echo "Copying over $pageName\n";
 	$url = $settings['privatewiki'] . "/api.php?format=xml&action=query&titles=$pageName&prop=revisions&rvprop=content";
 	$data = httpRequest($url, $params = '');
 	$xml = simplexml_load_string($data);
 	$content = (string)$xml->query->pages->page->revisions->rev;
-
-	//Now copy this to other wiki
 	$timestamp = (string)$xml->query->pages->page->revisions->rev['timestamp'];
 
 	if( count( $parts ) === 2 && $parts[0] === 'File') { // files are handled here
 		$url = $settings['privatewiki'] . "/api.php?action=query&titles=$pageName&prop=imageinfo&iiprop=url&format=xml";
 		$data = httpRequest($url, $params = '');
 		$xml = simplexml_load_string($data);
-		//fetch category pages and call them recursively
 		$expr = "/api/query/pages/page/imageinfo/ii";
-		$fileUrl = urlencode( (string)$xml->xpath($expr)[0]['url']);
+		$imageInfo = $xml->xpath($expr);
+        $rawFileURL = $imageInfo[0]['url'];
+        $fileUrl = urlencode( (string)$rawFileURL );
 		$url = $settings['publicwiki'] . "/api.php?action=upload&filename=$parts[1]&text=$content&url=$fileUrl&format=xml&ignorewarnings=1";
 		$data = httpRequest($url, $params = "&token=$editToken");
 		return;
 	}
+
 	// now copy normal page
 	$url = $settings['publicwiki'] . "/api.php?format=xml&action=edit&title=$pageName&text=$content";
 	$data = httpRequest($url, $params = "format=xml&action=edit&title=$pageName&text=$content&token=$editToken");
@@ -132,7 +119,7 @@ function copypage( $pageName, $editToken ) {
 		$expr = "/api/query/categorymembers/cm";
 		$result = $xml->xpath($expr);
 		foreach( $result as $page ) {
-			copypage( (string)$page['title'] );
+			copypage( (string)$page['title'], $editToken );
 		}
 	}
 
