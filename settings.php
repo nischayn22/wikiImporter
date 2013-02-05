@@ -3,14 +3,14 @@
 
 // Settings for public wiki
 
-$settings['publicWiki'] = "http://localhost/publicAruba"; // Location of Api.php
+$settings['publicWiki'] = "http://myPublic.com/w"; // Location of Api.php
 $settings['publicWikiUser'] = "Nischay Nahata"; // Username of account with read,write permissions
 $settings['publicWikiPassword'] = "password"; // Password
 
 
 // Settings for private wiki
 
-$settings['privateWiki'] = "http://localhost/privateAruba"; // Location of Api.php
+$settings['privateWiki'] = "http://myPrivate.com/w"; // Location of Api.php
 $settings['privateWikiUser'] = "Nischay Nahata"; // Username of account with read,write permissions
 $settings['privateWikiPassword'] = "password"; // Password
 
