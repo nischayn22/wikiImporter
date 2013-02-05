@@ -20,15 +20,15 @@ function httpRequest($url, $post="") {
 	//curl_setopt($ch, CURLOPT_VERBOSE, true); // Display communication with server
 	//$fp = fopen("output.tmp", "w");
 	//curl_setopt($ch, CURLOPT_STDERR, $fp); // Display communication with server
-	
+
 	$xml = curl_exec($ch);
-	
+
 	if (!$xml) {
-			throw new Exception("Error getting data from server ($url): " . curl_error($ch));
+		throw new Exception("Error getting data from server ($url): " . curl_error($ch));
 	}
 
 	curl_close($ch);
-	
+
 	return $xml;
 }
 
@@ -39,31 +39,31 @@ function login ( $site, $user, $pass, $token='') {
 
 	$params = "action=login&lgname=$user&lgpassword=$pass";
 	if (!empty($token)) {
-			$params .= "&lgtoken=$token";
+		$params .= "&lgtoken=$token";
 	}
 
 	$data = httpRequest($url, $params);
 
 	if (empty($data)) {
-			throw new Exception("No data received from server. Check that API is enabled.");
+		throw new Exception("No data received from server. Check that API is enabled.");
 	}
 
 	$xml = simplexml_load_string($data);
 	if (!empty($token)) {
-			//Check for successful login
-			$expr = "/api/login[@result='Success']";
-			$result = $xml->xpath($expr);
+		//Check for successful login
+		$expr = "/api/login[@result='Success']";
+		$result = $xml->xpath($expr);
 
-			if(!count($result)) {
-					throw new Exception("Login failed");
-			}
+		if(!count($result)) {
+			throw new Exception("Login failed");
+		}
 	} else {
-			$expr = "/api/login[@token]";
-			$result = $xml->xpath($expr);
+		$expr = "/api/login[@token]";
+		$result = $xml->xpath($expr);
 
-			if(!count($result)) {
-					throw new Exception("Login token not found in XML");
-			}
+		if(!count($result)) {
+			throw new Exception("Login token not found in XML");
+		}
 	}
 
 	return $result[0]->attributes()->token;
@@ -72,7 +72,7 @@ function login ( $site, $user, $pass, $token='') {
 function deletepage( $pageid, $deleteToken ) {
 	global $settings;
 
-	$url = $settings['publicwiki'] . "/api.php?action=delete&format=xml";
+	$url = $settings['publicWiki'] . "/api.php?action=delete&format=xml";
 	$params = "action=delete&pageid=$pageid&token=$deleteToken&reason=Outdated";
 	$data = httpRequest($url, $params);
 	$xml = simplexml_load_string($data);
@@ -85,34 +85,34 @@ function copypage( $pageName, $editToken ) {
 	$pageName = str_replace( ' ', '_', $pageName );
 	// Get Namespace
 	$parts = explode( ':', $pageName );
-	$url = $settings['privatewiki'] . "/api.php?format=xml&action=query&titles=$pageName&prop=revisions&rvprop=content";
+	$url = $settings['privateWiki'] . "/api.php?format=xml&action=query&titles=$pageName&prop=revisions&rvprop=content";
 	$data = httpRequest($url, $params = '');
 	$xml = simplexml_load_string($data);
 	$content = (string)$xml->query->pages->page->revisions->rev;
 	$timestamp = (string)$xml->query->pages->page->revisions->rev['timestamp'];
 
 	if( count( $parts ) === 2 && $parts[0] === 'File') { // files are handled here
-		$url = $settings['privatewiki'] . "/api.php?action=query&titles=$pageName&prop=imageinfo&iiprop=url&format=xml";
+		$url = $settings['privateWiki'] . "/api.php?action=query&titles=$pageName&prop=imageinfo&iiprop=url&format=xml";
 		$data = httpRequest($url, $params = '');
 		$xml = simplexml_load_string($data);
 		$expr = "/api/query/pages/page/imageinfo/ii";
 		$imageInfo = $xml->xpath($expr);
-        $rawFileURL = $imageInfo[0]['url'];
-        $fileUrl = urlencode( (string)$rawFileURL );
-		$url = $settings['publicwiki'] . "/api.php?action=upload&filename=$parts[1]&text=$content&url=$fileUrl&format=xml&ignorewarnings=1";
+		$rawFileURL = $imageInfo[0]['url'];
+		$fileUrl = urlencode( (string)$rawFileURL );
+		$url = $settings['publicWiki'] . "/api.php?action=upload&filename=$parts[1]&text=$content&url=$fileUrl&format=xml&ignorewarnings=1";
 		$data = httpRequest($url, $params = "&token=$editToken");
 		return;
 	}
 
 	// now copy normal page
-	$url = $settings['publicwiki'] . "/api.php?format=xml&action=edit&title=$pageName&text=$content";
+	$url = $settings['publicWiki'] . "/api.php?format=xml&action=edit&title=$pageName&text=$content";
 	$data = httpRequest($url, $params = "format=xml&action=edit&title=$pageName&text=$content&token=$editToken");
 	$xml = simplexml_load_string($data);
 	// TODO: get status to display
 
 	// Now copy category members too
 	if( count( $parts ) === 2 && $parts[0] === 'Category') {
-		$url = $settings['privatewiki'] . "/api.php?format=xml&action=query&cmtitle=$pageName&list=categorymembers&cmlimit=10000";
+		$url = $settings['privateWiki'] . "/api.php?format=xml&action=query&cmtitle=$pageName&list=categorymembers&cmlimit=10000";
 		$data = httpRequest($url, $params = '');
 		$xml = simplexml_load_string($data);
 		//fetch category pages and call them recursively

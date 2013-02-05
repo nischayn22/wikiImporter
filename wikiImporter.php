@@ -16,14 +16,14 @@ echo "Logging in to public wiki\n";
 
 try {
 	global $settings;
-	$token = login($settings['publicwiki'],$settings['publicWikiUser'], $settings['publicWikiPassword']);
-	login($settings['publicwiki'],$settings['publicWikiUser'], $settings['publicWikiPassword'], $token);
+	$token = login($settings['publicWiki'],$settings['publicWikiUser'], $settings['publicWikiPassword']);
+	login($settings['publicWiki'],$settings['publicWikiUser'], $settings['publicWikiPassword'], $token);
 	echo ("SUCCESS\n");
 } catch (Exception $e) {
 	die("FAILED: " . $e->getMessage() . "\n");
 }
 //get token first
-$url = $settings['publicwiki'] . "/api.php?format=xml&action=query&titles=Main_Page&prop=info|revisions&intoken=edit";
+$url = $settings['publicWiki'] . "/api.php?format=xml&action=query&titles=Main_Page&prop=info|revisions&intoken=edit";
 $data = httpRequest($url, $params = '');
 $xml = simplexml_load_string($data);
 $editToken = urlencode( (string)$xml->query->pages->page['edittoken'] );
@@ -32,7 +32,7 @@ echo "Starting to delete pages and files one by one in public wiki... \n";
 
 
 for( $i=0; $i<15; $i++ ) {
-	$url = $settings['publicwiki'] . "/api.php?action=query&list=allpages&format=xml&apnamespace=$i&aplimit=10000"; // Hope this limit is enough large that we don't have the trouble to do this again and again using 'continue'
+	$url = $settings['publicWiki'] . "/api.php?action=query&list=allpages&format=xml&apnamespace=$i&aplimit=10000"; // Hope this limit is enough large that we don't have the trouble to do this again and again using 'continue'
 	$data = httpRequest($url, $params = '');
 	$xml = simplexml_load_string($data);
 	$expr = "/api/query/allpages/p";
@@ -49,8 +49,8 @@ for( $i=0; $i<15; $i++ ) {
 echo "Logging into private wiki now\n";
 try {
 	global $settings;
-	$token = login($settings['privatewiki'],$settings['privateWikiUser'], $settings['privateWikiPassword']);
-	login($settings['privatewiki'],$settings['privateWikiUser'], $settings['privateWikiPassword'], $token);
+	$token = login($settings['privateWiki'],$settings['privateWikiUser'], $settings['privateWikiPassword']);
+	login($settings['privateWiki'],$settings['privateWikiUser'], $settings['privateWikiPassword'], $token);
 	echo ("SUCCESS\n");
 } catch (Exception $e) {
 	die("FAILED: " . $e->getMessage() . "\n");
