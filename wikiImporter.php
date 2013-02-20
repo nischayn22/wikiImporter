@@ -28,10 +28,16 @@ $data = httpRequest($url, $params = '');
 $xml = simplexml_load_string($data);
 $editToken = urlencode( (string)$xml->query->pages->page['edittoken'] );
 
-echo "Starting to delete pages and files one by one in public wiki... \n";
+echo "Starting to delete pagesone by one in public wiki... \n";
 
 
 for( $i=0; $i<15; $i++ ) {
+
+	// Skip files or not
+	if( $i == 6 && !$settings['deleteFiles'] ) {
+		continue;
+	}
+
 	$url = $settings['publicWiki'] . "/api.php?action=query&list=allpages&format=xml&apnamespace=$i&aplimit=10000"; // Hope this limit is enough large that we don't have the trouble to do this again and again using 'continue'
 	$data = httpRequest($url, $params = '');
 	$xml = simplexml_load_string($data);
