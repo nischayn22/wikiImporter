@@ -14,6 +14,11 @@ $settings['privateWiki'] = "http://myPrivate.com/w"; // Location of Api.php
 $settings['privateWikiUser'] = "Nischay Nahata"; // Username of account with read permissions
 $settings['privateWikiPassword'] = "password"; // Password
 
+// Settings for Basic HTTP Auth
+$global['serverAuth'] = true;
+$settings['ServerAuthUsername'] = 'nischay';
+$settings['ServerAuthPassword'] = 'password';
+
 
 // File containing list of pages to be copied over, separated by newlines
 

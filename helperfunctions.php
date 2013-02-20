@@ -10,6 +10,9 @@ function httpRequest($url, $post="") {
 	$ch = curl_init();
 	//Change the user agent below suitably
 	curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.9) Gecko/20071025 Firefox/2.0.0.9');
+	if( $global['serverAuth'] ) {
+		curl_setopt($ch, CURLOPT_USERPWD, $settings['AuthUsername'] . ":" . $settings['AuthPassword']);
+	}
 	curl_setopt($ch, CURLOPT_URL, ($url));
 	curl_setopt( $ch, CURLOPT_ENCODING, "UTF-8" );
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
