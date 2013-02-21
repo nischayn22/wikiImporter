@@ -16,8 +16,10 @@ function httpRequest($url, $post="") {
 	curl_setopt($ch, CURLOPT_URL, ($url));
 	curl_setopt( $ch, CURLOPT_ENCODING, "UTF-8" );
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-	curl_setopt ($ch, CURLOPT_COOKIEFILE, $settings['cookiefile']);
-	curl_setopt ($ch, CURLOPT_COOKIEJAR, $settings['cookiefile']);
+	curl_setopt($ch, CURLOPT_COOKIEFILE, $settings['cookiefile']);
+	curl_setopt($ch, CURLOPT_COOKIEJAR, $settings['cookiefile']);
+	curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 	if (!empty($post)) curl_setopt($ch,CURLOPT_POSTFIELDS,$post);
 	//UNCOMMENT TO DEBUG TO output.tmp
 	//curl_setopt($ch, CURLOPT_VERBOSE, true); // Display communication with server

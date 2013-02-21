@@ -15,7 +15,7 @@ $settings['privateWikiUser'] = "Nischay Nahata"; // Username of account with rea
 $settings['privateWikiPassword'] = "password"; // Password
 
 // Settings for Basic HTTP Auth
-$global['serverAuth'] = true;
+$settings['serverAuth'] = true;
 $settings['AuthUsername'] = 'nischay';
 $settings['AuthPassword'] = 'password';
 
