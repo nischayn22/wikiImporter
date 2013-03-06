@@ -4,7 +4,7 @@
  * @license GPL v2 or later
  */
 
-function httpRequest($url, $post="") {
+function httpRequest($url, $post="", $retry = false, $retryNumber = 0) {
 	global $settings;
 
 	try {
@@ -36,8 +36,13 @@ function httpRequest($url, $post="") {
 		curl_close($ch);
 	} catch( Exception $e ) {
 		echo 'Caught exception: ',  $e->getMessage(), "\n";
+		if( !$retry && $retryNumber <3 ) {
+			echo "Retrying \n";
+			httpRequest($url, $post, true, $retryNumber++ );
+		} else {
+			echo "Could not perform action after 3 attempts. Skipping now...\n"
+		}
 	}
-
 	return $xml;
 }
 
