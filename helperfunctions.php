@@ -7,32 +7,36 @@
 function httpRequest($url, $post="") {
 	global $settings;
 
-	$ch = curl_init();
-	//Change the user agent below suitably
-	curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.9) Gecko/20071025 Firefox/2.0.0.9');
-	if( $settings['serverAuth'] ) {
-		curl_setopt($ch, CURLOPT_USERPWD, $settings['AuthUsername'] . ":" . $settings['AuthPassword']);
+	try {
+		$ch = curl_init();
+		//Change the user agent below suitably
+		curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.9) Gecko/20071025 Firefox/2.0.0.9');
+		if( $settings['serverAuth'] ) {
+			curl_setopt($ch, CURLOPT_USERPWD, $settings['AuthUsername'] . ":" . $settings['AuthPassword']);
+		}
+		curl_setopt($ch, CURLOPT_URL, ($url));
+		curl_setopt( $ch, CURLOPT_ENCODING, "UTF-8" );
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch, CURLOPT_COOKIEFILE, $settings['cookiefile']);
+		curl_setopt($ch, CURLOPT_COOKIEJAR, $settings['cookiefile']);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+		if (!empty($post)) curl_setopt($ch,CURLOPT_POSTFIELDS,$post);
+		//UNCOMMENT TO DEBUG TO output.tmp
+		//curl_setopt($ch, CURLOPT_VERBOSE, true); // Display communication with server
+		//$fp = fopen("output.tmp", "w");
+		//curl_setopt($ch, CURLOPT_STDERR, $fp); // Display communication with server
+
+		$xml = curl_exec($ch);
+
+		if (!$xml) {
+			throw new Exception("Error getting data from server ($url): " . curl_error($ch));
+		}
+
+		curl_close($ch);
+	} catch( Exception $e ) {
+		echo 'Caught exception: ',  $e->getMessage(), "\n";
 	}
-	curl_setopt($ch, CURLOPT_URL, ($url));
-	curl_setopt( $ch, CURLOPT_ENCODING, "UTF-8" );
-	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-	curl_setopt($ch, CURLOPT_COOKIEFILE, $settings['cookiefile']);
-	curl_setopt($ch, CURLOPT_COOKIEJAR, $settings['cookiefile']);
-	curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-	if (!empty($post)) curl_setopt($ch,CURLOPT_POSTFIELDS,$post);
-	//UNCOMMENT TO DEBUG TO output.tmp
-	//curl_setopt($ch, CURLOPT_VERBOSE, true); // Display communication with server
-	//$fp = fopen("output.tmp", "w");
-	//curl_setopt($ch, CURLOPT_STDERR, $fp); // Display communication with server
-
-	$xml = curl_exec($ch);
-
-	if (!$xml) {
-		throw new Exception("Error getting data from server ($url): " . curl_error($ch));
-	}
-
-	curl_close($ch);
 
 	return $xml;
 }
@@ -79,8 +83,10 @@ function deletepage( $pageid, $deleteToken ) {
 
 	$url = $settings['publicWiki'] . "/api.php?action=delete&format=xml";
 	$params = "action=delete&pageid=$pageid&token=$deleteToken&reason=Outdated";
-	$data = httpRequest($url, $params);
-	$xml = simplexml_load_string($data);
+	httpRequest($url, $params);
+	// Nothing to do with response currently
+	// $data = httpRequest($url, $params);
+	// $xml = simplexml_load_string($data);
 }
 
 function copypage( $pageName, $editToken ) {
