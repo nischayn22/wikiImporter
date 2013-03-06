@@ -40,7 +40,7 @@ function httpRequest($url, $post="", $retry = false, $retryNumber = 0) {
 			echo "Retrying \n";
 			httpRequest($url, $post, true, $retryNumber++ );
 		} else {
-			echo "Could not perform action after 3 attempts. Skipping now...\n"
+			echo "Could not perform action after 3 attempts. Skipping now...\n";
 		}
 	}
 	return $xml;
