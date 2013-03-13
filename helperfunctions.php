@@ -127,7 +127,7 @@ function copypage( $pageName, $editToken ) {
 	// TODO: get status to display
 
 	// Now import images linked on the page
-	echo "Finding file links in $pageName\n";
+	echo "Finding file links in $pageName ...\n";
 	$url = $settings['privateWiki'] . "/api.php?format=xml&action=query&prop=images&titles=$pageName&imlimit=1000";
 	$data = httpRequest( $url );
 	$xml = simplexml_load_string($data);
