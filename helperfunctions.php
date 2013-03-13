@@ -126,6 +126,23 @@ function copypage( $pageName, $editToken ) {
 	$xml = simplexml_load_string($data);
 	// TODO: get status to display
 
+	// Now import images linked on the page
+	echo "Finding image links in $pageName\n";
+	$url = $settings['privateWiki'] . "/api.php?format=xml&action=query&prop=images&titles=$pageName&imlimit=1000";
+	$data = httpRequest( $url );
+	$xml = simplexml_load_string($data);
+	//fetch image Links and copy them as well
+	$expr = "/api/query/pages/page/images/im";
+	$result = $xml->xpath($expr);
+	if( $result ) {
+		foreach( $result as $image ) {
+			echo "Image link found to " . (string)$image['title'] . " \n";
+			copypage( (string)$image['title'], $editToken );
+		}
+	} else {
+		echo "No image links found\n";
+	}
+
 	// Now copy category members too
 	if( count( $parts ) === 2 && $parts[0] === 'Category') {
 		$url = $settings['privateWiki'] . "/api.php?format=xml&action=query&cmtitle=$pageName&list=categorymembers&cmlimit=10000";
@@ -138,5 +155,8 @@ function copypage( $pageName, $editToken ) {
 			copypage( (string)$page['title'], $editToken );
 		}
 	}
+}
 
+function handleImageLinks( $pageName ) {
+	
 }
