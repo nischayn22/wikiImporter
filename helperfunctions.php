@@ -104,6 +104,7 @@ function copypage( $pageName, $editToken ) {
 	$url = $settings['privateWiki'] . "/api.php?format=xml&action=query&titles=$pageName&prop=revisions&rvprop=content";
 	$data = httpRequest($url, $params = '');
 	$xml = simplexml_load_string($data);
+	errorHandler( $xml );
 	$content = (string)$xml->query->pages->page->revisions->rev;
 	$timestamp = (string)$xml->query->pages->page->revisions->rev['timestamp'];
 
@@ -117,19 +118,22 @@ function copypage( $pageName, $editToken ) {
 		$fileUrl = urlencode( (string)$rawFileURL );
 		$url = $settings['publicWiki'] . "/api.php?action=upload&filename=$parts[1]&text=$content&url=$fileUrl&format=xml&ignorewarnings=1";
 		$data = httpRequest($url, $params = "&token=$editToken");
+		$xml = simplexml_load_string($data);
+		errorHandler( $xml );
 	}
 
 	// now copy normal page
 	$url = $settings['publicWiki'] . "/api.php?format=xml&action=edit&title=$pageName&text=$content";
 	$data = httpRequest($url, $params = "format=xml&action=edit&title=$pageName&text=$content&token=$editToken");
 	$xml = simplexml_load_string($data);
-	// TODO: get status to display
+	errorHandler( $xml );
 
 	// Now import images linked on the page
 	echo "Finding file links in $pageName ...\n";
 	$url = $settings['privateWiki'] . "/api.php?format=xml&action=query&prop=images&titles=$pageName&imlimit=1000";
 	$data = httpRequest( $url );
 	$xml = simplexml_load_string($data);
+	errorHandler( $xml );
 	//fetch image Links and copy them as well
 	$expr = "/api/query/pages/page/images/im";
 	$result = $xml->xpath($expr);
@@ -147,6 +151,7 @@ function copypage( $pageName, $editToken ) {
 		$url = $settings['privateWiki'] . "/api.php?format=xml&action=query&cmtitle=$pageName&list=categorymembers&cmlimit=10000";
 		$data = httpRequest($url, $params = '');
 		$xml = simplexml_load_string($data);
+		errorHandler( $xml );
 		//fetch category pages and call them recursively
 		$expr = "/api/query/categorymembers/cm";
 		$result = $xml->xpath($expr);
@@ -156,6 +161,11 @@ function copypage( $pageName, $editToken ) {
 	}
 }
 
-function handleImageLinks( $pageName ) {
-	
+function errorHandler( $xml ){
+	if( $xml->error ) {
+		$errors = is_array( $xml->error )? $xml->error : array( $xml->error );
+		foreach( $errors as $error ) {
+			echo "Error code: " . $error['code'] . " " . $error['info'] . "\n";
+		}
+	}
 }
