@@ -117,7 +117,6 @@ function copypage( $pageName, $editToken ) {
 		$fileUrl = urlencode( (string)$rawFileURL );
 		$url = $settings['publicWiki'] . "/api.php?action=upload&filename=$parts[1]&text=$content&url=$fileUrl&format=xml&ignorewarnings=1";
 		$data = httpRequest($url, $params = "&token=$editToken");
-		return;
 	}
 
 	// now copy normal page
