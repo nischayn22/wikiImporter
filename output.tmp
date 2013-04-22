@@ -1,0 +1,16 @@
+* About to connect() to localhost port 80 (#0)
+*   Trying 127.0.0.1...
+* connected
+* Connected to localhost (127.0.0.1) port 80 (#0)
+* Server auth using Basic with user 'nischay'
+> POST /publicAruba/api.php?format=xml&action=edit&title=Category:Id&text=Id category HTTP/1.1
+Authorization: Basic bmlzY2hheTpwYXNzd29yZA==
+User-Agent: Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.9) Gecko/20071025 Firefox/2.0.0.9
+Host: localhost
+Accept: */*
+Accept-Encoding: UTF-8
+Cookie: privateArubaUserName=Nischay+Nahata; privateArubaUserID=1; privateAruba_session=9c0ff38c8bd189bfff32b55cf31340a7; publicArubaToken=d7b441ae439eba9909f419787009e927; publicArubaUserName=Nischay+Nahata; publicArubaUserID=1; publicAruba_session=22f38761997b3203b88eaf83a8fb197f; privateArubaToken=f8380aa6a0696982f7fba5a4cc4e1a48
+Content-Length: 102
+Content-Type: application/x-www-form-urlencoded
+
+* upload completely sent off: 102 out of 102 bytes

@@ -30,7 +30,7 @@ function httpRequest($url, $post="", $retry = false, $retryNumber = 0) {
 		$xml = curl_exec($ch);
 
 		if (!$xml) {
-			throw new Exception("Error getting data from server ($url): " . curl_error($ch));
+			throw new Exception("Error getting data from server: " . curl_error($ch));
 		}
 
 		curl_close($ch);
@@ -41,6 +41,7 @@ function httpRequest($url, $post="", $retry = false, $retryNumber = 0) {
 			httpRequest($url, $post, true, $retryNumber++ );
 		} else {
 			echo "Could not perform action after 3 attempts. Skipping now...\n";
+			return null;
 		}
 	}
 	return $xml;
@@ -125,6 +126,13 @@ function copypage( $pageName, $editToken ) {
 	// now copy normal page
 	$url = $settings['publicWiki'] . "/api.php?format=xml&action=edit&title=$pageName&text=$content";
 	$data = httpRequest($url, $params = "format=xml&action=edit&title=$pageName&text=$content&token=$editToken");
+	if ( $data == null ) {
+		// write to file that copy failed
+		echo "logging page name in failed_pages.txt\n";
+		$fp = fopen('failed_pages.txt', 'w');
+		fwrite($fp, $pageName);
+		fclose($fp);
+	}
 	$xml = simplexml_load_string($data);
 	errorHandler( $xml );
 
@@ -162,7 +170,7 @@ function copypage( $pageName, $editToken ) {
 }
 
 function errorHandler( $xml ){
-	if( $xml->error ) {
+	if( property_exists( $xml, 'error' ) ) {
 		$errors = is_array( $xml->error )? $xml->error : array( $xml->error );
 		foreach( $errors as $error ) {
 			echo "Error code: " . $error['code'] . " " . $error['info'] . "\n";
