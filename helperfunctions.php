@@ -129,10 +129,9 @@ function copypage( $pageName, $editToken ) {
 	if ( $data == null ) {
 		// write to file that copy failed
 		echo "logging page name in failed_pages.txt\n";
-		$fp = fopen('failed_pages.txt', 'w');
-		fwrite($fp, $pageName);
-		fclose($fp);
+		file_put_contents( 'failed_pages.txt' , $pageName, FILE_APPEND );
 	}
+
 	$xml = simplexml_load_string($data);
 	errorHandler( $xml );
 
