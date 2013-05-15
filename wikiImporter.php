@@ -27,7 +27,7 @@ $data = httpRequest($url, $params = '');
 $xml = simplexml_load_string($data);
 $editToken = urlencode( (string)$xml->query->pages->page['edittoken'] );
 
-echo "Starting to delete pagesone by one in public wiki... \n";
+echo "Starting to delete pages one by one in public wiki... \n";
 
 
 for( $i=0; $i<15; $i++ ) {
@@ -70,4 +70,4 @@ foreach($pages as $pageName) {
 	copypage( $pageName, $editToken );
 }
 
-echo "All done.\n";
+echo "All done. Now you can import the images into the public wiki using importImages.php\n";

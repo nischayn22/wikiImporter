@@ -116,11 +116,10 @@ function copypage( $pageName, $editToken ) {
 		$expr = "/api/query/pages/page/imageinfo/ii";
 		$imageInfo = $xml->xpath($expr);
 		$rawFileURL = $imageInfo[0]['url'];
-		$fileUrl = urlencode( (string)$rawFileURL );
-		$url = $settings['publicWiki'] . "/api.php?action=upload&filename=$parts[1]&text=$content&url=$fileUrl&format=xml&ignorewarnings=1";
-		$data = httpRequest($url, $params = "&token=$editToken");
-		$xml = simplexml_load_string($data);
-		errorHandler( $xml );
+		$rawFileURL = (string) $imageInfo[0]['url'];
+		echo "Saving file " . $parts[1] . " \n";
+		$file = httpRequest( $rawFileURL );
+		file_put_contents( $parts[1] , $file );
 	}
 
 	// now copy normal page
