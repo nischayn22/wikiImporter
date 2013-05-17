@@ -127,6 +127,7 @@ function copypage( $pageName, $editToken ) {
 		}
 
 		file_put_contents( $settings['imagesDirectory'] . "/" . $parts[1] , $file );
+		return;
 	}
 
 	// now copy normal page
