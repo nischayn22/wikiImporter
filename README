@@ -19,6 +19,10 @@ $settings['privateWiki'] = "http://myPrivate.com/w"; // Location of Api.php
 $settings['privateWikiUser'] = "Nischay Nahata"; // Username of account with read permissions
 $settings['privateWikiPassword'] = "password"; // Password
 
+
+## Please provide all kinds of permissions to the user accounts above including apihighlimits (http://www.mediawiki.org/wiki/API:Query_-_Lists#Limits) for proper functioning.
+
+
 ## If you need to authenticate against a server use following settings
 // Settings for Basic HTTP Auth
 $global['serverAuth'] = true;
