@@ -119,7 +119,14 @@ function copypage( $pageName, $editToken ) {
 		$rawFileURL = (string) $imageInfo[0]['url'];
 		echo "Saving file " . $parts[1] . " \n";
 		$file = httpRequest( $rawFileURL );
-		file_put_contents( $parts[1] , $file );
+
+		if ( !is_dir( $settings['imagesDirectory'] ) ) {
+			// dir doesn't exist, make it
+			echo "Creating directory " . $settings['imagesDirectory'] . "\n";
+			mkdir( $settings['imagesDirectory'] );
+		}
+
+		file_put_contents( $settings['imagesDirectory'] . "/" . $parts[1] , $file );
 	}
 
 	// now copy normal page

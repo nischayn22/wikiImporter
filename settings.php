@@ -26,3 +26,6 @@ $settings['file'] = "clientPages.txt";
 
 // Whether to delete files or not
 $settings['deleteFiles'] = false;
+
+// folder to store files downloaded from private wiki; just specify the name here and the folder will be automatically created.
+$settings['imagesDirectory'] = 'images';
