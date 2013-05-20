@@ -117,16 +117,20 @@ function copypage( $pageName, $editToken ) {
 		$imageInfo = $xml->xpath($expr);
 		$rawFileURL = $imageInfo[0]['url'];
 		$rawFileURL = (string) $imageInfo[0]['url'];
-		echo "Saving file " . $parts[1] . " \n";
-		$file = httpRequest( $rawFileURL );
+		echo "Downloading file " . $parts[1] . " \n";
 
 		if ( !is_dir( $settings['imagesDirectory'] ) ) {
 			// dir doesn't exist, make it
 			echo "Creating directory " . $settings['imagesDirectory'] . "\n";
 			mkdir( $settings['imagesDirectory'] );
 		}
+		$result = download( $rawFileURL, $settings['imagesDirectory'] . "/" . $parts[1] );
 
-		file_put_contents( $settings['imagesDirectory'] . "/" . $parts[1] , $file );
+		if ( !$result ) {
+			echo "Download error...Check if file exists and is usable \n";
+		} else {
+			echo "File download successfully \n";
+		}
 		return;
 	}
 
@@ -182,4 +186,27 @@ function errorHandler( $xml ){
 			echo "Error code: " . $error['code'] . " " . $error['info'] . "\n";
 		}
 	}
+}
+
+function download($url, $file_target) {
+	global $settings;
+	$fp = fopen ( $file_target, 'w+');//This is the file where we save the information
+	$ch = curl_init(str_replace(" ","%20",$url));//Here is the file we are downloading, replace spaces with %20
+	if( $settings['serverAuth'] ) {
+		curl_setopt($ch, CURLOPT_USERPWD, $settings['AuthUsername'] . ":" . $settings['AuthPassword']);
+	}
+	curl_setopt($ch, CURLOPT_URL, ($url));
+//	curl_setopt( $ch, CURLOPT_ENCODING, "UTF-8" );
+//	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+	curl_setopt($ch, CURLOPT_COOKIEFILE, $settings['cookiefile']);
+	curl_setopt($ch, CURLOPT_COOKIEJAR, $settings['cookiefile']);
+	curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+	curl_setopt($ch, CURLOPT_TIMEOUT, 50);
+	curl_setopt($ch, CURLOPT_FILE, $fp); // write curl response to file
+	curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+	$xml = curl_exec($ch); // get curl response
+	curl_close($ch);
+	fclose($fp);
+	return $xml;
 }

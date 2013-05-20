@@ -44,7 +44,7 @@ for( $i=0; $i<15; $i++ ) {
 	$result = $xml->xpath($expr);
 	foreach( $result as $page ) {
 		echo "Deleting page ". (string)$page['title'] . "\n";
-		deletepage( (string)$page['pageid'], $editToken );
+//		deletepage( (string)$page['pageid'], $editToken );
 	}
 }
 //all deletion done now :)
