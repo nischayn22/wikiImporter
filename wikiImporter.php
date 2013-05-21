@@ -31,7 +31,6 @@ echo "Starting to delete pages one by one in public wiki... \n";
 //get pagenames that shouldn't be deleted
 $doNotDeletePages = file( $settings['doNotDeletePages'], FILE_IGNORE_NEW_LINES );
 
-
 for( $i=0; $i<15; $i++ ) {
 
 	// Skip files or not
@@ -48,6 +47,8 @@ for( $i=0; $i<15; $i++ ) {
 		if( !in_array( (string)$page['title'], $doNotDeletePages ) ) {
 			echo "Deleting page ". (string)$page['title'] . "\n";
 			deletepage( (string)$page['pageid'], $editToken );
+		} else {
+			echo "Skipping page ". (string)$page['title'] . "\n";
 		}
 	}
 }
