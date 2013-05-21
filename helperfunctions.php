@@ -128,6 +128,9 @@ function copypage( $pageName, $editToken ) {
 
 		if ( !$result ) {
 			echo "Download error...Check if file exists and is usable \n";
+			// write to file that copy failed
+			echo "logging in failed_pages.txt \n";
+			file_put_contents( 'failed_pages.txt' , $pageName . "\n", FILE_APPEND );
 		} else {
 			echo "File download successfully \n";
 		}
@@ -140,7 +143,7 @@ function copypage( $pageName, $editToken ) {
 	if ( $data == null ) {
 		// write to file that copy failed
 		echo "logging page name in failed_pages.txt\n";
-		file_put_contents( 'failed_pages.txt' , $pageName, FILE_APPEND );
+		file_put_contents( 'failed_pages.txt' , $pageName . "\n", FILE_APPEND );
 	}
 
 	$xml = simplexml_load_string($data);

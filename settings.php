@@ -21,7 +21,6 @@ $settings['AuthPassword'] = 'password';
 
 
 // File containing list of pages to be copied over, separated by newlines
-
 $settings['file'] = "clientPages.txt";
 
 // Whether to delete files or not
@@ -29,3 +28,6 @@ $settings['deleteFiles'] = false;
 
 // folder to store files downloaded from private wiki; just specify the name here and the folder will be automatically created.
 $settings['imagesDirectory'] = 'images';
+
+// File containing list of pages to be never deleted, separated by newlines
+$settings['doNotDeletePages'] = "doNotDelete.txt";

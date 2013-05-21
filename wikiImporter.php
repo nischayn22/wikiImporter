@@ -28,6 +28,8 @@ $xml = simplexml_load_string($data);
 $editToken = urlencode( (string)$xml->query->pages->page['edittoken'] );
 
 echo "Starting to delete pages one by one in public wiki... \n";
+//get pagenames that shouldn't be deleted
+$doNotDeletePages = file( $settings['doNotDeletePages'], FILE_IGNORE_NEW_LINES );
 
 
 for( $i=0; $i<15; $i++ ) {
@@ -43,8 +45,10 @@ for( $i=0; $i<15; $i++ ) {
 	$expr = "/api/query/allpages/p";
 	$result = $xml->xpath($expr);
 	foreach( $result as $page ) {
-		echo "Deleting page ". (string)$page['title'] . "\n";
-//		deletepage( (string)$page['pageid'], $editToken );
+		if( !in_array( (string)$page['title'], $doNotDeletePages ) ) {
+			echo "Deleting page ". (string)$page['title'] . "\n";
+			deletepage( (string)$page['pageid'], $editToken );
+		}
 	}
 }
 //all deletion done now :)
