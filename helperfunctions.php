@@ -95,7 +95,7 @@ function deletepage( $pageid, $deleteToken ) {
 	// $xml = simplexml_load_string($data);
 }
 
-function copypage( $pageName, $editToken ) {
+function copypage( $pageName, $editToken, $recursivelyCalled = true ) {
 	global $settings;
 
 	echo "Copying over $pageName\n";
@@ -168,7 +168,10 @@ function copypage( $pageName, $editToken ) {
 	}
 
 	// Now copy category members too
-	if( count( $parts ) === 2 && $parts[0] === 'Category') {
+	if( count( $parts ) === 2 && $parts[0] === 'Category' ) {
+		if( !$settings['recurseCategories'] && $recursivelyCalled ) {
+			return;
+		}
 		$url = $settings['privateWiki'] . "/api.php?format=xml&action=query&cmtitle=$pageName&list=categorymembers&cmlimit=10000";
 		$data = httpRequest($url, $params = '');
 		$xml = simplexml_load_string($data);

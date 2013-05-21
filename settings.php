@@ -31,3 +31,6 @@ $settings['imagesDirectory'] = 'images';
 
 // File containing list of pages to be never deleted, separated by newlines
 $settings['doNotDeletePages'] = "doNotDelete.txt";
+
+// Whether to handle categories recursively
+$settings['recurseCategories'] = false;

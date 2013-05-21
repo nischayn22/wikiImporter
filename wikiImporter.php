@@ -72,7 +72,7 @@ echo "Starting to import pages, categories and files...\n";
 $pages = file($settings['file'], FILE_IGNORE_NEW_LINES);
 
 foreach($pages as $pageName) {
-	copypage( $pageName, $editToken );
+	copypage( $pageName, $editToken, false );
 }
 
 echo "All done. Now you can import the images into the public wiki using importImages.php\n";
