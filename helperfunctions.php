@@ -139,7 +139,7 @@ function copypage( $pageName, $editToken, $recursivelyCalled = true ) {
 
 	// now copy normal page
 	$content = urlencode( $content );
-	$url = $settings['publicWiki'] . "/api.php?format=xml&action=edit&title=$pageName&text=$content";
+	$url = $settings['publicWiki'] . "/api.php?format=xml&action=edit&title=$pageName";
 	$data = httpRequest($url, $params = "format=xml&action=edit&title=$pageName&text=$content&token=$editToken");
 	if ( $data == null ) {
 		// write to file that copy failed
