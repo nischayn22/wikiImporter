@@ -36,7 +36,12 @@ function copypage( $pageName, $recursivelyCalled = true ) {
 	}
 
 	// now copy normal page
-	$data = $publicApi->editPage($pageName, $content);
+	if ($settings['create'])
+	{
+		$data = $publicApi->createPage($pageName, $content);
+	} else {
+		$data = $publicApi->editPage($pageName, $content);
+	}
 	if ( $data == null ) {
 		// write to file that copy failed
 		echo "logging page name in failed_pages.txt\n";

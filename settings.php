@@ -37,3 +37,6 @@ $settings['recurseCategories'] = false;
 
 // Whether to delete anything
 $settings['delete'] = false;
+
+// Whether to only create new pages, otherwise we will edit pages and override stuff
+$settings['create'] = false;
