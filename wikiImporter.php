@@ -4,7 +4,7 @@
  * @license GPL v2 or later
  */
 
-error_reporting( E_STRICT );
+//error_reporting( E_STRICT );
 
 
 include( 'settings.php' );
@@ -19,28 +19,32 @@ $publicApi->login($settings['publicWikiUser'], $settings['publicWikiPassword']);
 
 echo "Starting to delete pages one by one in public wiki... \n";
 
-//get pagenames that shouldn't be deleted
-$doNotDeletePages = file( $settings['doNotDeletePages'], FILE_IGNORE_NEW_LINES );
+if( $settings['delete'] ) {
+	//get pagenames that shouldn't be deleted
+	$doNotDeletePages = file( $settings['doNotDeletePages'], FILE_IGNORE_NEW_LINES );
 
-for( $i=0; $i<15; $i++ ) {
+	for( $i=0; $i<15; $i++ ) {
 
-	// Skip files or not
-	if( $i == 6 && !$settings['deleteFiles'] ) {
-		continue;
-	}
+		// Skip files or not
+		if( $i == 6 && !$settings['deleteFiles'] ) {
+			continue;
+		}
 
-	$result = $publicApi->listPageInNamespace($i);
-	foreach( $result as $page ) {
-		if( !in_array( (string)$page['title'], $doNotDeletePages ) ) {
-			echo "Deleting page ". (string)$page['title'] . "\n";
-			$publicApi->deleteById((string)$page['pageid']);
-		} else {
-			echo "Skipping page ". (string)$page['title'] . "\n";
+		$result = $publicApi->listPageInNamespace($i);
+		foreach( $result as $page ) {
+			if( !in_array( (string)$page['title'], $doNotDeletePages ) ) {
+				echo "Deleting page ". (string)$page['title'] . "\n";
+				$publicApi->deleteById((string)$page['pageid']);
+			} else {
+				echo "Skipping page ". (string)$page['title'] . "\n";
+			}
 		}
 	}
-}
 
-//all deletion done now :)
+	//all deletion done now :)
+} else {
+	echo "Not deleting anything because the settings says so\n";
+}
 
 //copy pages
 

@@ -34,3 +34,6 @@ $settings['doNotDeletePages'] = "doNotDelete.txt";
 
 // Whether to handle categories recursively
 $settings['recurseCategories'] = false;
+
+// Whether to delete anything
+$settings['delete'] = false;

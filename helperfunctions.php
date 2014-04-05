@@ -14,7 +14,7 @@ function copypage( $pageName, $recursivelyCalled = true ) {
 	$content = $publicApi->readPage($pageName);
 
 	if( count( $parts ) === 2 && $parts[0] === 'File') { // files are handled here
-	    	$rawFileUrl = $privateApi->getFileUrl($pageName);
+	    $rawFileUrl = $privateApi->getFileUrl($pageName);
 		echo "Downloading file " . $parts[1] . " \n";
 
 		if ( !is_dir( $settings['imagesDirectory'] ) ) {
@@ -22,7 +22,7 @@ function copypage( $pageName, $recursivelyCalled = true ) {
 			echo "Creating directory " . $settings['imagesDirectory'] . "\n";
 			mkdir( $settings['imagesDirectory'] );
 		}
-		$result = $privateApi->download( $rawFileURL, $settings['imagesDirectory'] . "/" . $parts[1] );
+		$result = download( $rawFileUrl, $settings['imagesDirectory'] . "/" . $parts[1] );
 
 		if ( !$result ) {
 			echo "Download error...Check if file exists and is usable \n";
@@ -36,7 +36,7 @@ function copypage( $pageName, $recursivelyCalled = true ) {
 	}
 
 	// now copy normal page
-	$data = $publicApi->createPage($pageName, $content);
+	$data = $publicApi->editPage($pageName, $content);
 	if ( $data == null ) {
 		// write to file that copy failed
 		echo "logging page name in failed_pages.txt\n";
@@ -66,7 +66,7 @@ function copypage( $pageName, $recursivelyCalled = true ) {
 		if( !$settings['recurseCategories'] && $recursivelyCalled ) {
 			return;
 		}
-		$result = $privateApi->listPagesInCategory($pageName)
+		$result = $privateApi->listPageInCategory($pageName);
 		foreach( $result as $page ) {
 			copypage( (string)$page['title'] );
 		}
