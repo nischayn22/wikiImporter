@@ -4,33 +4,17 @@
  * @license GPL v2 or later
  */
 
-function deletepage( $pageid, $deleteToken ) {
-	global $settings;
-	deleteId($settings['publicWiki'], $pageid, $deleteToken);
-}
-
-function copypage( $pageName, $editToken, $recursivelyCalled = true ) {
-	global $settings;
+function copypage( $pageName, $recursivelyCalled = true ) {
+	global $settings, $publicApi, $privateApi;
 
 	echo "Copying over $pageName\n";
 	$pageName = str_replace( ' ', '_', $pageName );
 	// Get Namespace
 	$parts = explode( ':', $pageName );
-	$url = $settings['privateWiki'] . "/api.php?format=xml&action=query&titles=$pageName&prop=revisions&rvprop=content";
-	$data = httpRequest($url, $params = '');
-	$xml = simplexml_load_string($data);
-	errorHandler( $xml );
-	$content = (string)$xml->query->pages->page->revisions->rev;
-	$timestamp = (string)$xml->query->pages->page->revisions->rev['timestamp'];
+	$content = $publicApi->readPage($pageName);
 
 	if( count( $parts ) === 2 && $parts[0] === 'File') { // files are handled here
-		$url = $settings['privateWiki'] . "/api.php?action=query&titles=$pageName&prop=imageinfo&iiprop=url&format=xml";
-		$data = httpRequest($url, $params = '');
-		$xml = simplexml_load_string($data);
-		$expr = "/api/query/pages/page/imageinfo/ii";
-		$imageInfo = $xml->xpath($expr);
-		$rawFileURL = $imageInfo[0]['url'];
-		$rawFileURL = (string) $imageInfo[0]['url'];
+	    	$rawFileUrl = $privateApi->getFileUrl($pageName);
 		echo "Downloading file " . $parts[1] . " \n";
 
 		if ( !is_dir( $settings['imagesDirectory'] ) ) {
@@ -38,7 +22,7 @@ function copypage( $pageName, $editToken, $recursivelyCalled = true ) {
 			echo "Creating directory " . $settings['imagesDirectory'] . "\n";
 			mkdir( $settings['imagesDirectory'] );
 		}
-		$result = download( $rawFileURL, $settings['imagesDirectory'] . "/" . $parts[1] );
+		$result = $privateApi->download( $rawFileURL, $settings['imagesDirectory'] . "/" . $parts[1] );
 
 		if ( !$result ) {
 			echo "Download error...Check if file exists and is usable \n";
@@ -52,7 +36,7 @@ function copypage( $pageName, $editToken, $recursivelyCalled = true ) {
 	}
 
 	// now copy normal page
-	$data = exportPage($settings['publicWiki'], $pageName, $content, $editToken);
+	$data = $publicApi->createPage($pageName, $content);
 	if ( $data == null ) {
 		// write to file that copy failed
 		echo "logging page name in failed_pages.txt\n";
@@ -71,7 +55,7 @@ function copypage( $pageName, $editToken, $recursivelyCalled = true ) {
 	if( $result ) {
 		foreach( $result as $image ) {
 			echo "Link found to " . (string)$image['title'] . " \n";
-			copypage( (string)$image['title'], $editToken );
+			copypage( (string)$image['title'] );
 		}
 	} else {
 		echo "No file links found\n";
@@ -82,15 +66,9 @@ function copypage( $pageName, $editToken, $recursivelyCalled = true ) {
 		if( !$settings['recurseCategories'] && $recursivelyCalled ) {
 			return;
 		}
-		$url = $settings['privateWiki'] . "/api.php?format=xml&action=query&cmtitle=$pageName&list=categorymembers&cmlimit=10000";
-		$data = httpRequest($url, $params = '');
-		$xml = simplexml_load_string($data);
-		errorHandler( $xml );
-		//fetch category pages and call them recursively
-		$expr = "/api/query/categorymembers/cm";
-		$result = $xml->xpath($expr);
+		$result = $privateApi->listPagesInCategory($pageName)
 		foreach( $result as $page ) {
-			copypage( (string)$page['title'], $editToken );
+			copypage( (string)$page['title'] );
 		}
 	}
 }
