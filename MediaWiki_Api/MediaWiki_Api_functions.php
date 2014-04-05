@@ -88,7 +88,7 @@ function listPageInNamespace($namespace){
 }
 
 function listPageInCategory($category){
-		$url = $settings['privateWiki'] . "/api.php?format=xml&action=query&cmtitle=$category&list=categorymembers&cmlimit=10000";
+		$url = $this->siteUrl . "/api.php?format=xml&action=query&cmtitle=$category&list=categorymembers&cmlimit=10000";
 		$data = httpRequest($url, $params = '');
 		$xml = simplexml_load_string($data);
 		errorHandler( $xml );
@@ -163,7 +163,7 @@ function deleteByTitle( $title ){
 function deleteById( $id ){
 	 $deleteToken = $this->editToken;
 	$url = $this->siteUrl . "/api.php?action=delete&format=xml";
-	$params = "action=delete&pageid=$pageid&token=$deleteToken&reason=Outdated";
+	$params = "action=delete&pageid=$id&token=$deleteToken&reason=Outdated";
 	httpRequest($url, $params);
 	// Nothing to do with response currently
 	// $data = httpRequest($url, $params);
