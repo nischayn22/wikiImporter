@@ -10,7 +10,7 @@
 include( 'settings.php' );
 $settings['cookiefile'] = "cookies.tmp";
 
-include 'MediaWiki_Api\MediaWiki_Api_functions.php';
+include 'MediaWiki_Api/MediaWiki_Api_functions.php';
 include( 'helperfunctions.php' );
 
 $publicApi = new MediaWikiApi($settings['publicWiki']);
