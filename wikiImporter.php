@@ -4,7 +4,7 @@
  * @license GPL v2 or later
  */
 
-//error_reporting( E_STRICT );
+error_reporting( E_STRICT );
 
 
 include( 'settings.php' );
