@@ -73,6 +73,7 @@ class MediaWikiApi {
         $data            = httpRequest($url, $params = '');
         $xml             = simplexml_load_string($data);
         $this->editToken = urlencode((string) $xml->query->pages->page['edittoken']);
+	errorHandler($xml);
         return $this->editToken;
     }
 
@@ -142,7 +143,7 @@ class MediaWikiApi {
         $data = httpRequest($url, $params = "format=xml&action=edit&title=$pageName&text=$content&token=$editToken");
 
         $xml = simplexml_load_string($data);
-        errorHandler($xml);
+        errorHandler($xml, $url . $params);
 
         if ($data == null)
             return null;
@@ -245,7 +246,7 @@ function download($url, $file_target) {
 }
 
 
-function errorHandler($xml) {
+function errorHandler($xml, $url = '') {
     if (property_exists($xml, 'error')) {
         $errors = is_array($xml->error) ? $xml->error : array(
             $xml->error
@@ -253,5 +254,19 @@ function errorHandler($xml) {
         foreach ($errors as $error) {
             echo "Error code: " . $error['code'] . " " . $error['info'] . "\n";
         }
+	if ($url != '')
+	   echo "URL: $url \n\n\n";
+    } else if (property_exists($xml, 'warnings')) {
+      $warnings = is_array($xml->warnings) ? $xml->warnings : array(
+           $xml->warnings
+      );
+      foreach ($warnings as $warning) {
+        if (property_exists($warning, 'info')) {
+          $infos = (array)$warning->info;
+          foreach($infos as $info)
+            if (!empty($info))
+            echo "Warning: " . $info . "\n";
+        }
+      }
     }
 }
