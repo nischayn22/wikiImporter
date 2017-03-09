@@ -5,6 +5,8 @@
  */
 
 error_reporting( E_STRICT );
+//UNCOMMENT THIS TO SHOW ALL PHP ERRORS
+//error_reporting ( E_ALL );
 
 
 include( 'settings.php' );

@@ -13,6 +13,14 @@ function copypage( $pageName, $recursivelyCalled = true ) {
 	$parts = explode( ':', $pageName );
 	$content = $publicApi->readPage($pageName);
 
+        if ( empty($content) ) {
+	    // write to file that reading failed
+	    echo "Page read error...Check if page exists and is accessible \n";
+            echo "logging page name in failed_pages.txt\n";
+            file_put_contents( 'failed_pages.txt' , $pageName . "\n", FILE_APPEND );
+	    return;
+        }
+
 	if( count( $parts ) === 2 && $parts[0] === 'File') { // files are handled here
 	    $rawFileUrl = $privateApi->getFileUrl($pageName);
 		echo "Downloading file " . $parts[1] . " \n";
