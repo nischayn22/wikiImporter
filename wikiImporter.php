@@ -64,4 +64,4 @@ foreach($pages as $pageName) {
 	copypage( $pageName, false );
 }
 
-echo "All done. Now you can import the images into the public wiki using importImages.php\n";
+echo "All done.\n";
