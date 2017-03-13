@@ -10,7 +10,7 @@ function copypage( $pageName, $recursivelyCalled = true ) {
 	echo "Copying over $pageName\n";
 	// Get Namespace
 	$parts = explode( ':', $pageName );
-	$content = $publicApi->readPage($pageName);
+	$content = $privateApi->readPage($pageName);
 
         if ( empty($content) ) {
 	    // write to file that reading failed
@@ -78,4 +78,3 @@ function copypage( $pageName, $recursivelyCalled = true ) {
 		}
 	}
 }
-
