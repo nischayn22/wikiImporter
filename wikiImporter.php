@@ -17,6 +17,7 @@ include( 'helperfunctions.php' );
 
 $publicApi = new MediaWikiApi($settings['publicWiki']);
 echo "Logging in to public wiki\n";
+$publicApi->logout();
 $publicApi->login($settings['publicWikiUser'], $settings['publicWikiPassword']);
 
 echo "Starting to delete pages one by one in public wiki... \n";
@@ -53,6 +54,7 @@ if( $settings['delete'] ) {
 $privateApi = new MediaWikiApi($settings['privateWiki']);
 
 echo "Logging into private wiki now\n";
+$privateApi->logout();
 $privateApi->login($settings['privateWikiUser'], $settings['privateWikiPassword']);
 
 echo "Starting to import pages, categories and files...\n";
@@ -63,5 +65,8 @@ $pages = file($settings['file'], FILE_IGNORE_NEW_LINES);
 foreach($pages as $pageName) {
 	copypage( $pageName, false );
 }
+
+$publicApi->logout();
+$privateApi->logout();
 
 echo "All done.\n";

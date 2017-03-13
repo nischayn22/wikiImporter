@@ -41,8 +41,10 @@ class MediaWikiApi {
         if (!empty($token)) {
             $params .= "&lgtoken=$token";
         }
-
+        //UNCOMMENT TO DEBUG TO STDOUT
+        //print($params);
         $data = httpRequest($url, $params);
+
 	//UNCOMMENT TO DEBUG TO STDOUT
 	//print($data);
 
@@ -77,9 +79,14 @@ class MediaWikiApi {
         return urlencode($result[0]->attributes()->token);
     }
 
+    function logout() {
+        $url = $this->siteUrl . "/api.php?action=logout";
+        $params = "";
+        $data = httpRequest($url, $params);
+    }
 
     function setEditToken() {
-        $url             = $this->siteUrl . "/api.php?format=xml&action=query&meta=tokens";
+        $url             = $this->siteUrl . "/api.php?format=xml&action=query&meta=tokens&assert=user";
         $data            = httpRequest($url, $params = '');
         $xml             = simplexml_load_string($data);
 	$expr   = "/api/query/tokens[@csrftoken]";
@@ -144,10 +151,13 @@ class MediaWikiApi {
 			$section   = urlencode($section);
 			$url .= "&rvsection=$section";
 		}
+        //UNCOMMENT TO DEBUG TO STDOUT
+        //print($url);
+
         $data = httpRequest($url, $params = '');
 
         //UNCOMMENT TO DEBUG TO STDOUT
-        print($data);
+        //print($data);
 
         $xml  = simplexml_load_string($data);
         errorHandler($xml);
@@ -189,11 +199,13 @@ class MediaWikiApi {
 			$section  = urlencode($section);
             $url .= "&section=$section";
 		}
+        //UNCOMMENT TO DEBUG TO STDOUT
+        //print($url);
 
-        $data = httpRequest($url, $params = "format=xml&action=edit&title=$pageName&token=$editToken");
+        $data = httpRequest($url, $params = "format=xml&action=edit&title=$pageName&token=$editToken&assert=user");
 
 	//UNCOMMENT TO DEBUG TO STDOUT
-	print($data);
+	//print($data);
 
         $xml = simplexml_load_string($data);
         errorHandler($xml, $url . $params);
@@ -301,7 +313,7 @@ class MediaWikiApi {
 
 
 function httpRequest($url, $post = "", $retry = false, $retryNumber = 0, $headers = array()) {
-	sleep(3);
+    sleep(3);
     global $settings;
 
     try {
@@ -316,6 +328,7 @@ function httpRequest($url, $post = "", $retry = false, $retryNumber = 0, $header
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_COOKIEFILE, $settings['cookiefile']);
         curl_setopt($ch, CURLOPT_COOKIEJAR, $settings['cookiefile']);
+        curl_setopt($ch, CURLOPT_COOKIESESSION, false);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         if (!empty($post))
@@ -333,6 +346,8 @@ function httpRequest($url, $post = "", $retry = false, $retryNumber = 0, $header
         }
 
         curl_close($ch);
+        //UNCOMMENT TO DEBUG TO output.tmp
+        //fclose($fp);
     }
     catch (Exception $e) {
         echo 'Caught exception: ', $e->getMessage(), "\n";
