@@ -37,7 +37,7 @@ $settings['file'] = "clientPages.txt";
 # Example -
 file named clientPages.txt has the following text:
 
-Hello
+Hello World
 Category:Id
 File:Passportpics.jpg
 
@@ -46,6 +46,7 @@ File:Passportpics.jpg
 
 # Authors
 wikiImporter was originally written by Nischay Nahata, as http://www.WikiWorks.com consultant for Aruba Networks
+Updated for MediaWiki 1.27 by Christoph Zimmermann from the [Public Domain Project](https://publicdomainproject.org)
 
 # License
 GPL v2 or later

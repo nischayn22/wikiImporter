@@ -5,6 +5,8 @@
  */
 
 error_reporting( E_STRICT );
+//UNCOMMENT THIS TO SHOW ALL PHP ERRORS
+//error_reporting ( E_ALL );
 
 
 include( 'settings.php' );
@@ -15,6 +17,7 @@ include( 'helperfunctions.php' );
 
 $publicApi = new MediaWikiApi($settings['publicWiki']);
 echo "Logging in to public wiki\n";
+$publicApi->logout();
 $publicApi->login($settings['publicWikiUser'], $settings['publicWikiPassword']);
 
 echo "Starting to delete pages one by one in public wiki... \n";
@@ -51,6 +54,7 @@ if( $settings['delete'] ) {
 $privateApi = new MediaWikiApi($settings['privateWiki']);
 
 echo "Logging into private wiki now\n";
+$privateApi->logout();
 $privateApi->login($settings['privateWikiUser'], $settings['privateWikiPassword']);
 
 echo "Starting to import pages, categories and files...\n";
@@ -62,4 +66,7 @@ foreach($pages as $pageName) {
 	copypage( $pageName, false );
 }
 
-echo "All done. Now you can import the images into the public wiki using importImages.php\n";
+$publicApi->logout();
+$privateApi->logout();
+
+echo "All done.\n";

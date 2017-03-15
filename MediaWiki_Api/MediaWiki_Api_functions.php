@@ -1,4 +1,6 @@
 <?php
+ ini_set('display_errors', 1); 
+ error_reporting(E_ALL);
 
 global $settings;
 $settings['cookiefile'] = "cookies.tmp";
@@ -39,8 +41,12 @@ class MediaWikiApi {
         if (!empty($token)) {
             $params .= "&lgtoken=$token";
         }
-
+        //UNCOMMENT TO DEBUG TO STDOUT
+        //print($params);
         $data = httpRequest($url, $params);
+
+	//UNCOMMENT TO DEBUG TO STDOUT
+	//print($data);
 
         if (empty($data)) {
             throw new Exception("No data received from server. Check that API is enabled.");
@@ -60,19 +66,34 @@ class MediaWikiApi {
             $result = $xml->xpath($expr);
 
             if (!count($result)) {
-                throw new Exception("Login token not found in XML");
+				// For old versions
+				$expr   = "/api/login[@lgtoken]";
+				$result = $xml->xpath($expr);
+				if (!count($result)) {
+					throw new Exception("Login token not found in XML");
+				}
             }
         }
-
-        return $result[0]->attributes()->token;
+	//UNCOMMENT TO DEBUG TO STDOUT
+	//print($result[0]->attributes()->token);
+        return urlencode($result[0]->attributes()->token);
     }
 
+    function logout() {
+        $url = $this->siteUrl . "/api.php?action=logout";
+        $params = "";
+        $data = httpRequest($url, $params);
+    }
 
     function setEditToken() {
-        $url             = $this->siteUrl . "/api.php?format=xml&action=query&titles=Main_Page&prop=info|revisions&intoken=edit";
+        $url             = $this->siteUrl . "/api.php?format=xml&action=query&meta=tokens&assert=user";
         $data            = httpRequest($url, $params = '');
         $xml             = simplexml_load_string($data);
-        $this->editToken = urlencode((string) $xml->query->pages->page['edittoken']);
+	$expr   = "/api/query/tokens[@csrftoken]";
+	$result = $xml->xpath($expr);
+	$this->editToken = urlencode($result[0]->attributes()->csrftoken);
+	//UNCOMMENT TO DEBUG TO STDOUT
+	//print($this->editToken);
 	errorHandler($xml);
         return $this->editToken;
     }
@@ -90,6 +111,7 @@ class MediaWikiApi {
     }
 
     function listPageInCategory($category) {
+	$category = urlencode( $category );
         $url  = $this->siteUrl . "/api.php?format=xml&action=query&cmtitle=$category&list=categorymembers&cmlimit=10000";
         $data = httpRequest($url, $params = '');
         $xml  = simplexml_load_string($data);
@@ -99,8 +121,20 @@ class MediaWikiApi {
         return $xml->xpath($expr);
     }
 
+    function listImagesOnPage($pageName) {
+        // Returns a list with all image pages this page links to
+        $pageName   = urlencode($pageName);
+        $url        = $this->siteUrl . "/api.php?format=xml&action=query&prop=images&titles=$pageName&imlimit=1000";
+        $data       = httpRequest( $url );
+        $xml        = simplexml_load_string($data);
+        errorHandler($xml);
+        //fetch image Links and copy them as well
+        $expr = "/api/query/pages/page/images/im";
+        return $xml->xpath($expr);
+    }
 
     function getFileUrl($pageName) {
+	$pageName   = urlencode( $pageName );
         $url        = $this->siteUrl . "/api.php?action=query&titles=$pageName&prop=imageinfo&iiprop=url&format=xml";
         $data       = httpRequest($url, $params = '');
         $xml        = simplexml_load_string($data);
@@ -110,9 +144,21 @@ class MediaWikiApi {
         return (string) $imageInfo[0]['url'];
     }
 
-    function readPage($pageName) {
+    function readPage($pageName, $section = false) {
+	$pageName = urlencode( $pageName );
         $url  = $this->siteUrl . "/api.php?format=xml&action=query&titles=$pageName&prop=revisions&rvprop=content";
+		if ($section) {
+			$section   = urlencode($section);
+			$url .= "&rvsection=$section";
+		}
+        //UNCOMMENT TO DEBUG TO STDOUT
+        //print($url);
+
         $data = httpRequest($url, $params = '');
+
+        //UNCOMMENT TO DEBUG TO STDOUT
+        //print($data);
+
         $xml  = simplexml_load_string($data);
         errorHandler($xml);
         return (string) $xml->query->pages->page->revisions->rev;
@@ -122,7 +168,7 @@ class MediaWikiApi {
         return $this->editPage($pageName, $content, true);
     }
 
-    function editPage($pageName, $content, $createonly = false, $prepend = false, $append = false) {
+    function editPage($pageName, $content, $createonly = false, $prepend = false, $append = false, $summary = false, $section = false, $sectiontitle = false) {
         assert(!empty($pageName));
         assert(!empty($content));
 
@@ -133,14 +179,33 @@ class MediaWikiApi {
         $site      = $this->siteUrl;
         $content   = urlencode($content);
         $pageName  = urlencode($pageName);
-        $url       = $site . "/api.php?format=xml&action=edit&title=$pageName";
+        $url  = $site . "/api.php?format=xml&action=edit&title=$pageName";
+		$url .= "&text=$content";
         if ($createonly)
             $url .= "&createonly=true";
         if ($prepend)
-            $url .= "&prependtext=true";
+            $url .= "&prependtext=$content";
         if ($append)
-            $url .= "&appendtext=true";
-        $data = httpRequest($url, $params = "format=xml&action=edit&title=$pageName&text=$content&token=$editToken");
+            $url .= "&appendtext=$content";
+        if ($summary) {
+			$summary  = urlencode($summary);
+            $url .= "&summary=$summary";
+		}
+        if ($sectiontitle) {
+			$sectiontitle  = urlencode($sectiontitle);
+            $url .= "&sectiontitle=$sectiontitle";
+            $url .= "&section=new";
+		} else if ($section !== false) {
+			$section  = urlencode($section);
+            $url .= "&section=$section";
+		}
+        //UNCOMMENT TO DEBUG TO STDOUT
+        //print($url);
+
+        $data = httpRequest($url, $params = "format=xml&action=edit&title=$pageName&token=$editToken&assert=user");
+
+	//UNCOMMENT TO DEBUG TO STDOUT
+	//print($data);
 
         $xml = simplexml_load_string($data);
         errorHandler($xml, $url . $params);
@@ -177,10 +242,78 @@ class MediaWikiApi {
     }
 
 
+	function getSections($pageName) {
+        $url  = $this->siteUrl . "/api.php?format=xml&action=parse&page=$pageName&prop=sections";
+        $data = httpRequest($url, $params = '');
+        $xml  = simplexml_load_string($data);
+        $expr       = "/api/parse/sections/s";
+		$section_data = $xml->xpath($expr);
+		$result = array();
+		foreach($section_data as $data) {
+			$result[(string)$data['line']]  = array( "number" => (string)$data['number'], "level" => (string)$data['level']);
+		}
+		return $result;
+    }
+
+	function getSectionHeader($sectionName, $sectionLevel) {
+		return str_repeat("=", $sectionLevel) . $sectionName . str_repeat("=", $sectionLevel);
+	}
+
+	function insertBeginSection($pageName, $sectionName, $text, $changeReason = '') {
+		$sections = $this->getSections($pageName);
+		if (!array_key_exists($sectionName, $sections)) {
+			return false;
+		}
+		$content = $this->readPage($pageName, $sections[$sectionName]['number']);
+		$section_header = $this->getSectionHeader($sectionName, $sections[$sectionName]['level']);
+		$content = str_replace($section_header, '', $content);
+		$text .= $content;
+		$text = $section_header . "\n" . $text;
+		return $this->editPage($pageName, $text, false, false, false, $changeReason, $sections[$sectionName]['number']);
+	}
+
+	function insertEndSection($pageName, $sectionName, $text, $changeReason = '') {
+		$sections = $this->getSections($pageName);
+		if (!array_key_exists($sectionName, $sections)) {
+			return false;
+		}
+		$content = $this->readPage($pageName, $sections[$sectionName]['number']);
+		$section_header = $this->getSectionHeader($sectionName, $sections[$sectionName]['level']);
+		$content = str_replace($section_header, '', $content);
+		$text = $content . $text;
+		$text = $section_header . "\n" . $text;
+		return $this->editPage($pageName, $text, false, false, false, $changeReason, $sections[$sectionName]['number']);
+	}
+
+	function insertAfterSection($pageName, $sectionName, $text, $changeReason = '', $afterStr) {
+		$sections = $this->getSections($pageName);
+		if (!array_key_exists($sectionName, $sections)) {
+			return false;
+		}
+		$content = $this->readPage($pageName, $sections[$sectionName]['number']);
+		$section_header = $this->getSectionHeader($sectionName, $sections[$sectionName]['level']);
+		$content = str_replace($section_header, '', $content);
+		$parts = explode($afterStr, $content);
+		$text = $parts[0] . $afterStr . $text . $parts[1] . $parts[2];
+		$text = $section_header . "\n" . $text;
+		return $this->editPage($pageName, $text, false, false, false, $changeReason, $sections[$sectionName]['number']);
+	}
+
+	function replaceSection($pageName, $sectionName, $text, $changeReason = '') {
+		if (!array_key_exists($sectionName, $sections)) {
+			return false;
+		}
+		$sections = $this->getSections($pageName);
+		$section_header = $this->getSectionHeader($sectionName, $sections[$sectionName]['level']);
+		$text = $section_header . "\n" . $text;
+		return $this->editPage($pageName, $text, false, false, false, $changeReason, $sections[$sectionName]['number']);
+	}
+
 }
 
 
 function httpRequest($url, $post = "", $retry = false, $retryNumber = 0, $headers = array()) {
+    sleep(3);
     global $settings;
 
     try {
@@ -195,6 +328,7 @@ function httpRequest($url, $post = "", $retry = false, $retryNumber = 0, $header
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_COOKIEFILE, $settings['cookiefile']);
         curl_setopt($ch, CURLOPT_COOKIEJAR, $settings['cookiefile']);
+        curl_setopt($ch, CURLOPT_COOKIESESSION, false);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         if (!empty($post))
@@ -212,6 +346,8 @@ function httpRequest($url, $post = "", $retry = false, $retryNumber = 0, $header
         }
 
         curl_close($ch);
+        //UNCOMMENT TO DEBUG TO output.tmp
+        //fclose($fp);
     }
     catch (Exception $e) {
         echo 'Caught exception: ', $e->getMessage(), "\n";
@@ -273,4 +409,11 @@ function errorHandler($xml, $url = '') {
         }
       }
     }
+}
+function dieq() {
+        foreach ( func_get_args() as $arg ) {
+                var_dump( $arg );
+                echo "\n";
+        }
+        die('.');
 }

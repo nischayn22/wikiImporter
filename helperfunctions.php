@@ -8,10 +8,17 @@ function copypage( $pageName, $recursivelyCalled = true ) {
 	global $settings, $publicApi, $privateApi;
 
 	echo "Copying over $pageName\n";
-	$pageName = str_replace( ' ', '_', $pageName );
 	// Get Namespace
 	$parts = explode( ':', $pageName );
-	$content = $publicApi->readPage($pageName);
+	$content = $privateApi->readPage($pageName);
+
+        if ( empty($content) ) {
+	    // write to file that reading failed
+	    echo "Page read error...Check if page exists and is accessible \n";
+            echo "logging page name in failed_pages.txt\n";
+            file_put_contents( 'failed_pages.txt' , $pageName . "\n", FILE_APPEND );
+	    return;
+        }
 
 	if( count( $parts ) === 2 && $parts[0] === 'File') { // files are handled here
 	    $rawFileUrl = $privateApi->getFileUrl($pageName);
@@ -50,13 +57,7 @@ function copypage( $pageName, $recursivelyCalled = true ) {
 
 	// Now import images linked on the page
 	echo "Finding file links in $pageName ...\n";
-	$url = $settings['privateWiki'] . "/api.php?format=xml&action=query&prop=images&titles=$pageName&imlimit=1000";
-	$data = httpRequest( $url );
-	$xml = simplexml_load_string($data);
-	errorHandler( $xml );
-	//fetch image Links and copy them as well
-	$expr = "/api/query/pages/page/images/im";
-	$result = $xml->xpath($expr);
+	$result = $privateApi->listImagesOnPage($pageName);
 	if( $result ) {
 		foreach( $result as $image ) {
 			echo "Link found to " . (string)$image['title'] . " \n";
@@ -77,4 +78,3 @@ function copypage( $pageName, $recursivelyCalled = true ) {
 		}
 	}
 }
-
