@@ -1,0 +1,4 @@
+[submodule "MediaWiki_Api"]
+	path = MediaWiki_Api
+	url = https://github.com/nischayn22/MediaWiki_Api.git
+	branch = master
