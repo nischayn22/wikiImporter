@@ -20,9 +20,12 @@ echo "Logging in to public wiki\n";
 $publicApi->logout();
 $publicApi->login($settings['publicWikiUser'], $settings['publicWikiPassword']);
 
-echo "Starting to delete pages one by one in public wiki... \n";
+
 
 if( $settings['delete'] ) {
+
+	echo "Starting to delete pages one by one in public wiki... \n";
+
 	//get pagenames that shouldn't be deleted
 	$doNotDeletePages = file( $settings['doNotDeletePages'], FILE_IGNORE_NEW_LINES );
 
@@ -46,7 +49,7 @@ if( $settings['delete'] ) {
 
 	//all deletion done now :)
 } else {
-	echo "Not deleting anything because the settings says so\n";
+	echo "Not deleting images in the public wiki... \n";
 }
 
 //copy pages

@@ -12,13 +12,13 @@ function copypage( $pageName, $recursivelyCalled = true ) {
 	$parts = explode( ':', $pageName );
 	$content = $privateApi->readPage($pageName);
 
-        if ( empty($content) ) {
-	    // write to file that reading failed
-	    echo "Page read error...Check if page exists and is accessible \n";
-            echo "logging page name in failed_pages.txt\n";
-            file_put_contents( 'failed_pages.txt' , $pageName . "\n", FILE_APPEND );
-	    return;
-        }
+	if ( empty($content) ) {
+		// write to file that reading failed
+		echo "Page read error...Check if page exists and is accessible \n";
+		echo "logging page name in failed_pages.txt\n";
+		file_put_contents( 'failed_pages.txt' , $pageName . "\n", FILE_APPEND );
+		return;
+	}
 
 	if( count( $parts ) === 2 && $parts[0] === 'File') { // files are handled here
 	    $rawFileUrl = $privateApi->getFileUrl($pageName);
@@ -43,28 +43,32 @@ function copypage( $pageName, $recursivelyCalled = true ) {
 	}
 
 	// now copy normal page
-	if ($settings['create'])
-	{
+	if ($settings['create']) {
 		$data = $publicApi->createPage($pageName, $content);
 	} else {
 		$data = $publicApi->editPage($pageName, $content);
 	}
+
 	if ( $data == null ) {
 		// write to file that copy failed
 		echo "logging page name in failed_pages.txt\n";
 		file_put_contents( 'failed_pages.txt' , $pageName . "\n", FILE_APPEND );
 	}
 
-	// Now import images linked on the page
-	echo "Finding file links in $pageName ...\n";
-	$result = $privateApi->listImagesOnPage($pageName);
-	if( $result ) {
-		foreach( $result as $image ) {
-			echo "Link found to " . (string)$image['title'] . " \n";
-			copypage( (string)$image['title'] );
+	if ($settings['copy_images']) {
+		// Now import images linked on the page
+		echo "Finding file links in $pageName ...\n";
+		$result = $privateApi->listImagesOnPage($pageName);
+		if( $result ) {
+			foreach( $result as $image ) {
+				echo "Link found to " . (string)$image['title'] . " \n";
+				copypage( (string)$image['title'] );
+			}
+		} else {
+			echo "No file links found\n";
 		}
 	} else {
-		echo "No file links found\n";
+		echo "Skipping files\n";
 	}
 
 	// Now copy category members too

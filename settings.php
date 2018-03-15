@@ -40,3 +40,6 @@ $settings['delete'] = false;
 
 // Whether to only create new pages, otherwise we will edit pages and override stuff
 $settings['create'] = false;
+
+// Whether to copy over images found in wikitext
+$settings['copy_images'] = true;
