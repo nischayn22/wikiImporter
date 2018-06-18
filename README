@@ -4,8 +4,13 @@ i.e. if you have a public and a private wiki where the public wiki has *only* pa
 this script can selectively fetch pages/images from your private wiki and import them to your public wiki.
 Its needed to list all the pages to import in a file in separate lines.
 
-# Usage -
-Just run this script after setting the settings (below).
+# Installation -
+Download this repository
+Install Composer
+Run the following command "composer update"
+
+# Configuration -
+Configure the settings as shown below:
 
 --
 ## Please set the settings in settings.php to point to your wikis
@@ -43,6 +48,8 @@ File:Passportpics.jpg
 
 --
 
+# Usage -
+Run the script using the following command "php wikiImporter.php"
 
 # Authors
 wikiImporter was originally written by Nischay Nahata, as http://www.WikiWorks.com consultant for Aruba Networks
