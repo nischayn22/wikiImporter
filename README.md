@@ -1,18 +1,17 @@
-# Description -
+# Description
 This is a utility script that selectively updates a wiki using another wiki's content,
 i.e. if you have a public and a private wiki where the public wiki has *only* partial contents of the private wiki,
 this script can selectively fetch pages/images from your private wiki and import them to your public wiki.
 Its needed to list all the pages to import in a file in separate lines.
 
-# Installation -
+# Installation
 Download this repository
 Install Composer
 Run the following command "composer update"
 
-# Configuration -
+# Configuration
 Configure the settings as shown below:
 
---
 ## Please set the settings in settings.php to point to your wikis
 Example settings -
 
@@ -24,8 +23,14 @@ $settings['privateWiki'] = "http://myPrivate.com/w"; // Location of Api.php
 $settings['privateWikiUser'] = "Nischay Nahata"; // Username of account with read permissions
 $settings['privateWikiPassword'] = "password"; // Password
 
+Please provide all kinds of permissions to the user accounts above including apihighlimits (http://www.mediawiki.org/wiki/API:Query_-_Lists#Limits) for proper functioning.
 
-## Please provide all kinds of permissions to the user accounts above including apihighlimits (http://www.mediawiki.org/wiki/API:Query_-_Lists#Limits) for proper functioning.
+
+## Settings for Google Translate
+$settings['enableTranslate'] = true;
+$settings['GOOGLE_TRANSLATE_PROJECT_ID'] = 'YOUR-PROJECTID-XXXXXX';
+$settings['lang_to'] = 'en';
+
 
 
 ## If you need to authenticate against a server use following settings
@@ -37,7 +42,8 @@ $settings['AuthPassword'] = 'password';
 ## To not delete files set
 $settings['deleteFiles'] = false;
 
-$settings['file'] = "clientPages.txt";
+## Specify file containing list of pages to be copied
+$settings['copyPages'] = "clientPages.txt";
 
 # Example -
 file named clientPages.txt has the following text:
@@ -46,9 +52,11 @@ Hello World
 Category:Id
 File:Passportpics.jpg
 
+## To copy entire namespace specify namespace number as per [Namespaces](https://www.mediawiki.org/wiki/Manual:Namespace)
+0
 --
 
-# Usage -
+# Usage
 Run the script using the following command "php wikiImporter.php"
 
 # Authors
