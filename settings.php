@@ -21,7 +21,7 @@ $settings['AuthPassword'] = 'password';
 
 
 // File containing list of pages to be copied over, separated by newlines
-$settings['file'] = "clientPages.txt";
+$settings['copyPages'] = "clientPages.txt";
 
 // Whether to delete files or not
 $settings['deleteFiles'] = false;

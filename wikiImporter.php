@@ -8,6 +8,8 @@ error_reporting( E_STRICT );
 //UNCOMMENT THIS TO SHOW ALL PHP ERRORS
 //error_reporting ( E_ALL );
 
+# Includes the autoloader for libraries installed with composer
+require __DIR__ . '/vendor/autoload.php';
 
 include( 'settings.php' );
 $settings['cookiefile'] = "cookies.tmp";
@@ -63,7 +65,7 @@ $privateApi->login($settings['privateWikiUser'], $settings['privateWikiPassword'
 echo "Starting to import pages, categories and files...\n";
 
 //get pagenames from file
-$pages = file($settings['file'], FILE_IGNORE_NEW_LINES);
+$pages = file($settings['copyPages'], FILE_IGNORE_NEW_LINES);
 
 foreach($pages as $pageName) {
 	copypage( $pageName, false );
