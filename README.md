@@ -2,15 +2,20 @@
 This is a utility script that selectively updates a wiki using another wiki's content,
 i.e. if you have a public and a private wiki where the public wiki has *only* partial contents of the private wiki,
 this script can selectively fetch pages/images from your private wiki and import them to your public wiki.
-Its needed to list all the pages to import in a file in separate lines.
+The script can also copy over entire namespaces.
 
-# Installation
-Download this repository
-Install Composer
-Run the following command "composer update"
+Apart from this the script can translate wikitext from one language to another as well before importing.
 
-# Configuration
-Configure the settings as shown below:
+# Installation -
+
+	Download this repo
+	Install Composer
+	Install dependencies using:
+    composer update
+
+
+# Usage -
+Just run this script after setting the settings (below).
 
 ## Please set the settings in settings.php to point to your wikis
 Example settings -

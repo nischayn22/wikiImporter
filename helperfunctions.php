@@ -386,6 +386,12 @@ function translateWikiText( $content, $templateContent = false ) {
 			continue;
 		}
 
+		if ( $content[$i] == '#'&& substr( $content, $i+1, 8 ) == 'REDIRECT' && $state_arr[$state_deep] == 'CONTENT' ) {
+			$curr_str .= "#REDIRECT";
+			$i = $i + 8;
+			continue;
+		}
+
 		if ( $content[$i] == '{'&& $content[$i+1] == '#' && $state_arr[$state_deep] == 'CURLYBEGIN' ) {
 			array_pop( $state_arr );
 			$state_arr[] = 'PARSERFUNCBEGIN';

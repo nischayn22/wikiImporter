@@ -3,19 +3,26 @@
 
 // Settings for public wiki
 
-$settings['publicWiki'] = "http://myPublic.com/w"; // Location of Api.php
-$settings['publicWikiUser'] = "Nischay Nahata"; // Username of account with read,write permissions
-$settings['publicWikiPassword'] = "password"; // Password
+$settings['publicWiki'] = "http://localhost/test"; // Location of Api.php
+$settings['publicWikiUser'] = "Nischayn22"; // Username of account with read,write permissions
+$settings['publicWikiPassword'] = "RajatNischay12"; // Password
 
 
 // Settings for private wiki
 
-$settings['privateWiki'] = "http://myPrivate.com/w"; // Location of Api.php
-$settings['privateWikiUser'] = "Nischay Nahata"; // Username of account with read permissions
-$settings['privateWikiPassword'] = "password"; // Password
+$settings['privateWiki'] = "http://localhost/testnew"; // Location of Api.php
+$settings['privateWikiUser'] = "Nischayn22"; // Username of account with read permissions
+$settings['privateWikiPassword'] = "RajatNischay12"; // Password
+
+// Settings for Google Translate
+$settings['enableTranslate'] = false;
+$settings['GOOGLE_TRANSLATE_PROJECT_ID'] = 'steel-paratext-205412';
+$settings['lang_to'] = 'en';
+
+
 
 // Settings for Basic HTTP Auth
-$settings['serverAuth'] = true;
+$settings['serverAuth'] = false;
 $settings['AuthUsername'] = 'nischay';
 $settings['AuthPassword'] = 'password';
 
@@ -42,4 +49,4 @@ $settings['delete'] = false;
 $settings['create'] = false;
 
 // Whether to copy over images found in wikitext
-$settings['copy_images'] = true;
+$settings['copy_images'] = false;

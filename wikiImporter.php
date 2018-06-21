@@ -6,16 +6,21 @@
 
 error_reporting( E_STRICT );
 //UNCOMMENT THIS TO SHOW ALL PHP ERRORS
-//error_reporting ( E_ALL );
+error_reporting ( E_ALL );
 
 # Includes the autoloader for libraries installed with composer
 require __DIR__ . '/vendor/autoload.php';
 
 include( 'settings.php' );
 $settings['cookiefile'] = "cookies.tmp";
+use Nischayn22\MediaWikiApi;
 
-include 'MediaWiki_Api/MediaWiki_Api_functions.php';
 include( 'helperfunctions.php' );
+
+// $content = file_get_contents( 'http://localhost/github/wikiImporter/input.txt');
+// file_put_contents("output.txt", translateWikiText($content));
+// dieq();
+
 
 $publicApi = new MediaWikiApi($settings['publicWiki']);
 echo "Logging in to public wiki\n";
@@ -64,9 +69,17 @@ $privateApi->login($settings['privateWikiUser'], $settings['privateWikiPassword'
 
 echo "Starting to import pages, categories and files...\n";
 
-//get pagenames from file
-$pages = file($settings['copyPages'], FILE_IGNORE_NEW_LINES);
-
+if( count( $settings['copyNS'] ) > 0 ) {
+	$pages = array();
+	foreach( $settings['copyNS'] as $namespaceId ) {
+		$result = $privateApi->listPageInNamespace( $namespaceId );
+		foreach( $result as $page ) {
+			$pages[] = (string)$page['title'];
+		}
+	}
+} else {
+	$pages = file($settings['copyPages'], FILE_IGNORE_NEW_LINES);
+}
 foreach($pages as $pageName) {
 	copypage( $pageName, false );
 }
